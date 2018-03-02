@@ -146,7 +146,7 @@ def backward_propagation(parameters, cache, X, Y):
 
     return grads
 
-def update_parameters(grads, parameters, learning_rate = 1.2):
+def update_parameters(parameters, grads, learning_rate = 1.2):
     dW2 = grads["dW2"]
     db2 = grads["db2"]
     dW1 = grads["dW1"]
@@ -165,20 +165,82 @@ def update_parameters(grads, parameters, learning_rate = 1.2):
     parameters = {"W1":W1, "b1": b1, "W2":W2, "b2":b2}
 
     return parameters
+
+def neural_network_model(X, Y, n_h, num_iterations, print_cost = True):
+    np.random.seed(3)
+
+    n_x = layer_sizes(X, Y)[0]
+    n_y = layer_sizes(X, Y)[2]
+
+    parameters = initialize_parameters(n_x, n_h, n_y)
+
+    for i in range(0, num_iterations):
+        A2, cache = forward_propagation(X , parameters)
+
+        cost = compute_cost(A2, Y)
+
+        grads = backward_propagation(parameters, cache, X, Y)
+
+        parameters = update_parameters(parameters, grads)
+
+        if(print_cost and i%1000 == 0):
+            print("Cost after "+str(i)+" iteration: "+str(cost))
+    
+    return parameters
+
+def predict(parameters, X):
+    A2, cache = forward_propagation(X, parameters)
+    predictions = (A2 > 0.5)
+
+    return predictions
+
 def main():
-    X, Y = load_planar_dataset()
+    
+    noisy_circles, noisy_moons, blobs, gaussian_quantiles, no_structure = load_extra_datasets()
+    datasets = {"noisy_circles": noisy_circles,
+            "noisy_moons": noisy_moons,
+            "blobs": blobs,
+            "gaussian_quantiles": gaussian_quantiles}
+
+    X, Y = datasets['gaussian_quantiles']
+    X, Y = X.T, Y.reshape(1, Y.shape[0])
+    
     plt.scatter(X[0,:], X[1, :], c = Y, s = 40, cmap=plt.cm.Spectral)
     #This is for testing logistic regression
     #test_Logistic_Regression(X, Y)
     
-    parameters, grads = update_parameters_test_case()
-    parameters = update_parameters(grads,parameters)
-
-    print("W1 = " + str(parameters["W1"]))
-    print("b1 = " + str(parameters["b1"]))
-    print("W2 = " + str(parameters["W2"]))
-    print("b2 = " + str(parameters["b2"]))
-    # Note: we use the mean here just to make sure that your output matches ours. 
+    #===================================================================================================
+    parameters = neural_network_model(X, Y, n_h = 10, num_iterations = 10000, print_cost=True)
+    predictions = predict(parameters, X)
+    print ('Accuracy: %d' % float((np.dot(Y,predictions.T) + np.dot(1-Y,1-predictions.T))/float(Y.size)*100) + '%')
+    #===================================================================================================
+    
     #print(np.mean(cache['Z1']) ,np.mean(cache['A1']),np.mean(cache['Z2']),np.mean(cache['A2']))
+
+    # This may take about 2 minutes to run
+    # print("Neural network training initialized")
+    # hidden_layer_sizes = [1, 2, 3, 4, 5, 10, 20, 60] #[i for i in range(1, 100)]
+    # hidden_layers = []
+    # accuracy_per_layer = []
+    # plt.figure(figsize=(32,32))
+    # for i, n_h in enumerate(hidden_layer_sizes):
+    #     plt.subplot(5, 2, i+1)
+
+    #     hidden_layers.append(n_h)
+        
+    #     plt.title('Hidden Layer of size %d' % n_h)
+        
+    #     parameters = neural_network_model(X, Y, n_h, num_iterations = 10000)
+    #     plot_decision_boundary(lambda x: predict(parameters, x.T), X, Y)
+    #     predictions = predict(parameters, X)
+        
+    #     accuracy = float((np.dot(Y,predictions.T) + np.dot(1-Y,1-predictions.T))/float(Y.size)*100)
+    #     accuracy_per_layer.append(accuracy)
+    #     print ("Accuracy for {} hidden units: {} %".format(n_h, accuracy))
+    
+    # plt.grid(True)
+    # plt.plot(hidden_layers, accuracy_per_layer, 'bo', hidden_layers, accuracy_per_layer, 'k')
+    # plt.axis([0, 100, 60, 99])
+    #plt.show()
 if __name__ == '__main__':
     main()
