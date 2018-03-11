@@ -30,6 +30,7 @@ def initialize_parameters(n_x, n_h, n_y):
 def initialize_parameters_deep(layer_dims):
     np.random.seed(3)
     parameters = {}
+    #layer_dims is an containing number of hidden units at each layer    
     L = len(layer_dims)
 
     for l in range(1, L):
@@ -59,16 +60,46 @@ def linear_activation_forward(A_prev, W, b, activation):
         A, activation_cache = relu(Z)
     
     assert(A.shape == (W.shape[0], A_prev.shape[1]))
+    #Used in backpropagation
     cache = (linear_cache, activation_cache)
 
     return A, cache
+
+def L_model_forward(X, parameters):
+    caches = []
+    A = X
+    L = len(parameters) // 2    #Number of layers
+
+    for l in range(1, L):
+        A_prev = A
+        W = parameters["W"+str(l)]
+        b = parameters["b"+str(l)]
+
+        A, cache = linear_activation_forward(A_prev, W, b, "relu")
+
+        caches.append(cache)
+    
+    AL, cache = linear_activation_forward(A, parameters["W"+str(L)], parameters["b"+str(L)], "sigmoid")
+
+    caches.append(cache)
+
+    #Assertion to check whether all the inputs are parsed or not
+    assert(AL.shape == (1, X.shape[1]))
+
+    return AL, caches
+
+def compute_cost(AL, Y):
+    m = Y.shape[1]
+
+    cost = (-1./m) * np.sum(np.multiply(Y, np.log(AL)) + np.multiply((1-Y), np.log(1-AL)))
+
+    cost = np.squeeze(cost)
+    return cost
+
 def main():
-    A_prev, W, b = linear_activation_forward_test_case()
+    Y, AL = compute_cost_test_case()
 
-    A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "sigmoid")
-    print("With sigmoid: A = " + str(A))
+    print("cost = " + str(compute_cost(AL, Y)))
 
-    A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "relu")
-    print("With ReLU: A = " + str(A))
 if __name__ == "__main__":
     main()

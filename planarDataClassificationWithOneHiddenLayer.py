@@ -196,15 +196,7 @@ def predict(parameters, X):
 
 def main():
     
-    noisy_circles, noisy_moons, blobs, gaussian_quantiles, no_structure = load_extra_datasets()
-    datasets = {"noisy_circles": noisy_circles,
-            "noisy_moons": noisy_moons,
-            "blobs": blobs,
-            "gaussian_quantiles": gaussian_quantiles}
-
-    X, Y = datasets['gaussian_quantiles']
-    X, Y = X.T, Y.reshape(1, Y.shape[0])
-    
+    X, Y = load_planar_dataset()
     plt.scatter(X[0,:], X[1, :], c = Y, s = 40, cmap=plt.cm.Spectral)
     #This is for testing logistic regression
     #test_Logistic_Regression(X, Y)
@@ -241,6 +233,6 @@ def main():
     # plt.grid(True)
     # plt.plot(hidden_layers, accuracy_per_layer, 'bo', hidden_layers, accuracy_per_layer, 'k')
     # plt.axis([0, 100, 60, 99])
-    #plt.show()
+    plt.show()
 if __name__ == '__main__':
     main()
