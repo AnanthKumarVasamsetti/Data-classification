@@ -29,3 +29,43 @@ plt.rcParams['image.cmap'] = 'gray'
 
 
 np.random.seed(1)
+
+def initialize_paramters(n_x, n_h, n_y):
+        W1 = np.random.randn(n_h, n_x) * 0.01
+        W2 = np.random.randn(n_y, n_h) * 0.01
+
+        b1 = np.zeros((n_h, 1))
+        b2 = np.zeros((n_y, 1))
+
+        parameters = {
+                "W1" : W1,
+                "W2" : W2,
+                "b1" : b1,
+                "b2" : b2
+        }
+
+        return parameters
+
+def two_layer_model(X, y, layer_dims, learning_rate, num_iterations, print_cost = True):
+        parameters = initialize_parameters(layer_dims[0], layer_dims[1], layer_dims[2])
+
+        W1 = parameters["W1"]
+        W2 = parameters["W2"]
+        b1 = parameters["b1"]
+        b2 = parameters["b2"]
+
+        print(parameters)
+def main():
+        train_x_orig, train_y, test_x_orig, test_y, classes = load_data()
+
+        #Reshaping the training and testing samples
+        train_x_flatten = train_x_orig.reshape(train_x_orig.shape[0], -1).T
+        test_x_flatten = test_x_orig.reshape(test_x_orig.shape[0], -1).T
+
+        train_x = train_x_flatten / 255
+        test_x = test_x_flatten / 255
+
+        two_layer_model(train_x, train_y, [train_x.shape[0], 7, 1], 0.0075, 3000, True)
+
+if __name__ == "__main__":
+        main()
