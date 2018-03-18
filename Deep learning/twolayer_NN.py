@@ -150,10 +150,7 @@ def two_layer_model(X, y, layer_dims, learning_rate, num_iterations, print_cost 
                     print("Cost at iteration "+str(i)+": "+str(cost))
                     costs.append(cost)
 
-        plt.plot(costs)
-        plt.ylabel('Costs')
-        plt.xlabel('Iterations')
-        plt.show()
+        return parameters
 def main():
         train_x_orig, train_y, test_x_orig, test_y, classes = load_data()
 
@@ -164,7 +161,14 @@ def main():
         train_x = train_x_flatten / 255
         test_x = test_x_flatten / 255
 
-        two_layer_model(train_x, train_y, [train_x.shape[0], 7, 1], 0.0075, 10000, True)
+        parameters = two_layer_model(train_x, train_y, [train_x.shape[0], 7, 1], 0.009, 10000, True)
+
+        predictions_train = predict(train_x, train_y, parameters)
+
+        predictions_test = predict(test_x, test_y, parameters)
+
+        print("Train prediction: "+str(predictions_train))
+        print("Test prediction: "+str(predictions_test))
 
 if __name__ == "__main__":
         main()

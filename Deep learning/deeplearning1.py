@@ -22,7 +22,7 @@ def initialize_parameters(n_x, n_h, n_y):
         "W1": W1,
         "W2": W2,
         "b1": b1,
-        "b2": b2    
+        "b2": b2
     }
 
     return parameters
@@ -30,7 +30,7 @@ def initialize_parameters(n_x, n_h, n_y):
 def initialize_parameters_deep(layer_dims):
     np.random.seed(3)
     parameters = {}
-    #layer_dims is an containing number of hidden units at each layer    
+    #layer_dims is an containing number of hidden units at each layer
     L = len(layer_dims)
 
     for l in range(1, L):
@@ -39,7 +39,7 @@ def initialize_parameters_deep(layer_dims):
 
         assert(parameters["W"+str(l)].shape == (layer_dims[l], layer_dims[l-1]))
         assert(parameters["b"+str(l)].shape == (layer_dims[l], 1))
-    
+
     return parameters
 
 def linear_forward(A, W, b):
@@ -54,11 +54,11 @@ def linear_activation_forward(A_prev, W, b, activation):
     if activation == "sigmoid":
         Z, linear_cache = linear_forward(A_prev, W, b)
         A, activation_cache = sigmoid(Z)    #activation_cache used for backpropagation
-    
+
     elif activation == "relu":
         Z, linear_cache = linear_forward(A_prev, W, b)
         A, activation_cache = relu(Z)       #activation_cache used for backpropagation
-    
+
     assert(A.shape == (W.shape[0], A_prev.shape[1]))
     #Used in backpropagation
     cache = (linear_cache, activation_cache)
@@ -78,7 +78,7 @@ def L_model_forward(X, parameters):
         A, cache = linear_activation_forward(A_prev, W, b, "relu")
 
         caches.append(cache)
-    
+
     AL, cache = linear_activation_forward(A, parameters["W"+str(L)], parameters["b"+str(L)], "sigmoid")
 
     caches.append(cache)
@@ -115,10 +115,10 @@ def linear_activation_backward(dA, cache, activation):
     elif(activation == "sigmoid"):
         dZ = sigmoid_backward(dA, activation_cache)
         dA_prev, dW, db = linear_backward(dZ, linear_cache)
-    
+
     return dA_prev, dW, db
 
-def L_model_backward(AL, Y, caches):
+    def L_model_backward(AL, Y, caches):
     grads = {}
     L = len(caches)
     #Reshaping Y into the shape of AL
@@ -136,8 +136,8 @@ def L_model_backward(AL, Y, caches):
         grads["dA"+str(l + 1)] = dA_prev_temp
         grads["dW"+str(l + 1)] = dW_temp
         grads["db"+str(l + 1)] = db_temp
-    
-    return 
+
+    return
 
 def update_parameters(parameters, grads, learning_rate):
     L = len(parameters) // 2
@@ -145,7 +145,7 @@ def update_parameters(parameters, grads, learning_rate):
     for l in range(L):
         parameters["W" + str(l+1)] = parameters["W" + str(l+1)] - learning_rate * grads["dW" + str(l+1)]
         parameters["b" + str(l+1)] = parameters["b" + str(l+1)] - learning_rate * grads["db" + str(l+1)]
-    
+
     return parameters
 
 def main():
